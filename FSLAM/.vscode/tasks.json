@@ -1,0 +1,89 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "HSLAM tumMono",
+            "type": "shell",
+            "command": "${workspaceFolder}/build/${command:cmake.buildType}/bin/HSLAM",
+            "args": [
+                "-files= /home/nykvm/datasets/sequence_30/images.zip",
+                "-calib= /home/nykvm/datasets/sequence_30/camera.txt",
+                "-gamma= /home/nykvm/datasets/sequence_30/pcalib.txt",
+                "-vignette= /home/nykvm/datasets/sequence_30/newvignette.png",
+                "-LoopClosure=True",
+                "-vocabPath=${workspaceFolder}/misc/orbvoc.dbow3",
+                "-preset=0",
+                "-mode=0",
+                "-quiet=True",
+                "-nolog=True",
+                "-reverse=False",
+                "-nogui=False",
+                "-nomt=False",
+                "-preload=False",
+                "-startIndex=0",
+                "-endIndex=999999999",
+                "-speed=1.0"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "HSLAM EuroC",
+            "type": "shell",
+            "command": "${workspaceFolder}/build/${command:cmake.buildType}/bin/HSLAM",
+            "args": [
+                "-files=/mnt/Drive/VSLAM_Datasets/EuroC/ICRA_2019/mh04/data",
+                "-calib=${workspaceFolder}/misc/EuroC/camera.txt",
+                "-LoopClosure=True",
+                "-vocabPath=${workspaceFolder}/misc/orbvoc.dbow3",
+                "-preset=0",
+                "-mode=1",
+                "-quiet=True",
+                "-nolog=True",
+                "-reverse=False",
+                "-nogui=False",
+                "-nomt=False",
+                "-preload=False",
+                "-startIndex=420",
+                "-endIndex=1925",
+                "-speed=2.0"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "HSLAM Kitti",
+            "type": "shell",
+            "command": "${workspaceFolder}/build/${command:cmake.buildType}/bin/HSLAM",
+            "args": [
+                "-files=/home/gy/devel/datasets/kitti/00/image_0",
+                "-calib=${workspaceFolder}/misc/Kitti/Kitti00-02.txt",
+                "-LoopClosure=True",
+                "-vocabPath=${workspaceFolder}/misc/orbvoc.dbow3",
+                "-preset=1",
+                "-mode=1",
+                "-quiet=True",
+                "-nolog=True",
+                "-reverse=False",
+                "-nogui=False",
+                "-nomt=False",
+                "-preload=False",
+                "-startIndex=0",
+                "-endIndex=99999999",
+                "-speed=0.0"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "type": "cmake",
+            "label": "CMake: build",
+            "command": "build",
+            "targets": [
+                "all"
+            ],
+            "group": "build",
+            "problemMatcher": [],
+            "detail": "CMake template build task"
+        }
+    ]
+}

@@ -1,0 +1,18 @@
+#ROS
+roscore
+
+#ROS RUN USB CAM
+roslaunch usb_cam usb_cam-test.launch
+
+#ROS RUN D435 CAM
+roslaunch realsense2_camera rs_camera.launch
+
+#ROS RUN FSLAM USB CAM
+rosrun fslam_ros fslam_live image:=/usb_cam/image_raw calib=~/catkin_ws/src/res/camera.txt gamma=~/catkin_ws/src/res/pcalib.txt vignette=~/catkin_ws/src/res/vignette.png
+
+#ROS RUN HSLAM with D435 CAM
+rosrun fslam_ros fslam_live image:=/camera/color/image_raw calib=/catkin_ws/src/res/camera.txt gamma=/catkin_ws/src/res/pcalib.txt vignette=/catkin_ws/src/res/vignette.png
+
+
+
+docker run -it --net=host --privileged -e DISPLAY=unix$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:rw --device /dev/video0:/dev/video0  docker_fslam:1 /bin/bash

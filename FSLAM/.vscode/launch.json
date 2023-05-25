@@ -1,0 +1,64 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "(gdb) Launch",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/${command:cmake.buildType}/bin/HSLAM",
+            // "args": [
+            //     "-files=/mnt/Drive/VSLAM_Datasets/TUM_Mono/sequence_30/images.zip",
+            //     "-calib=/mnt/Drive/VSLAM_Datasets/TUM_Mono/sequence_30/camera.txt",
+            //     "-gamma=/mnt/Drive/VSLAM_Datasets/TUM_Mono/sequence_30/pcalib.txt",
+            //     "-vignette=/mnt/Drive/VSLAM_Datasets/TUM_Mono/sequence_30/vignette.png",
+            //     "-LoopClosure=True",
+            //     "-vocabPath=${workspaceFolder}/misc/orbvoc.dbow3",
+            //     "-preset=0",
+            //     "-mode=0",
+            //     "-quiet=1",
+            //     "-nolog=1",
+            //     "-reverse=0",
+            //     "-nogui=0",
+            //     "-nomt=0",
+            //     "-prefetch=0",
+            //     "-start=0",
+            //     "-end=999999999",
+            //     "-speed=0"
+            // ],
+            "args": [
+                "-files=/home/gy/Downloads/sequence_01/images.zip",
+                "-calib=/home/gy/Downloads/sequence_01/camera.txt",
+                "-gamma=/home/gy/Downloads/sequence_01/pcalib.txt",
+                "-vignette=/home/gy/Downloads/sequence_01/vignette.png",
+                "-LoopClosure=True",
+                "-vocabPath=${workspaceFolder}/misc/orbvoc.dbow3",
+                "-preset=0",
+                "-mode=0",
+                "-quiet=True",
+                "-nolog=True",
+                "-reverse=False",
+                "-nogui=False",
+                "-nomt=False",
+                "-preload=False",
+                "-startIndex=0",
+                "-endIndex=999999999",
+                "-speed=1.0"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        }
+    ]
+}
