@@ -13,6 +13,9 @@ rosrun fslam_ros fslam_live image:=/usb_cam/image_raw calib=~/catkin_ws/src/res/
 #ROS RUN HSLAM with D435 CAM
 rosrun fslam_ros fslam_live image:=/camera/color/image_raw calib=/catkin_ws/src/res/camera.txt gamma=/catkin_ws/src/res/pcalib.txt vignette=/catkin_ws/src/res/vignette.png
 
-
-
+#Allow acces for containers
+xhost +
+# docker run container for USB camera image
 docker run -it --net=host --privileged -e DISPLAY=unix$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:rw --device /dev/video0:/dev/video0  docker_fslam:1 /bin/bash
+# docker run container for D435 image
+docker run -it --net=host --privileged -e DISPLAY=unix$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:rw -v /dev:/dev  realsense:fslam /bin/bash
