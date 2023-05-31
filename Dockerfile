@@ -77,20 +77,23 @@ WORKDIR /catkin_ws/src/FSLAM
 COPY FSLAM /catkin_ws/src/FSLAM
 #build FSLAM project using cmake
 RUN mkdir -p build && cd build && cmake .. -DCMAKE_BUILD_TYPE=RelwithDebInfo && make -j 10
-#copy fslam_ros wrapper and resource files to run fslam_ros
-COPY res /catkin_ws/src/res
+#copy fslam_ros wrapper and build using catkin
 COPY fslam_ros /catkin_ws/src/fslam_ros
-
 WORKDIR /catkin_ws/
 RUN catkin init \
     && catkin config \
     -DCMAKE_BUILD_TYPE=Release \
     --extend /opt/ros/$ROS_DISTRO \
     && catkin build fslam_ros
+
+#Source catkin andc specify the entry point of the container
 RUN sed --in-place --expression \
       '$isource "/catkin_ws/devel/setup.bash"' \
       /ros_entrypoint.sh
-# Specify the entry point of the container
+#Copy calibiration files
+WORKDIR /catkin_ws/src/FSLAM
+COPY res /catkin_ws/src/res
+WORKDIR /catkin_ws
 CMD ["bash"]
 
 
