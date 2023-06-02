@@ -33,16 +33,16 @@ To use this Dockerfile and build the FSLAM project, follow these steps:
 4. Open a terminal and navigate to the directory containing the Dockerfile and project files.
 5. Run the following command to build the Docker image:
 
-'''bash
+```bash
     docker build -t fslam .
-'''
+```
 ## Usage
 
 To run the FSLAM project within the Docker container, execute the following command:
 
-''' bash
+``` bash
     docker run -it fslam
-'''
+```
 
 This command starts the container and provides an interactive terminal within it.
 
