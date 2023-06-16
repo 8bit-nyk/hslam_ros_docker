@@ -1,6 +1,12 @@
 # Project Title
 
-FSLAM (FastSLAM) Project
+FSLAM (Fusion Simultaneous Localization and Mapping) Project.
+A containerized "ready-to-use" SLAM application that leverages both direct and indirect methods.
+
+### Related Publications:
+[HSLAM]Younes, G. (2021). A Unified Hybrid Formulation for Visual SLAM (Doctoral dissertation). **[PDF] (https://scholarworks.aub.edu.lb/bitstream/handle/10938/22253/YounesGeorges_2021.pdf?sequence=5)**
+
+Please cite the paper if used in an academic context.
 
 ## Table of Contents
 
@@ -13,15 +19,10 @@ FSLAM (FastSLAM) Project
 
 ## Project Description
 
-The FSLAM project is an implementation of a visual simultaneous localization and mapping algorithm. It utilizes the ROS (Robot Operating System) Noetic and is designed for Ubuntu 20.04.
+The FSLAM project is an implementation of a visual simultaneous localization and mapping algorithm. 
+It utilizes the ROS (Robot Operating System) Noetic and is designed for Ubuntu 20.04.
 
-This Dockerfile is divided into multiple stages. In the first stage, it sets up the base image with Ubuntu 20.04 and ROS Noetic. It also installs the necessary dependencies for catkin tools.
 
-In the second stage, it installs additional dependencies and the Realsense SDK. These dependencies include various libraries and tools required for camera support, graphics, system functionality, and GUI elements. Additionally, it downloads and extracts third-party libraries, including Ceres Solver and OpenCV with OpenCV Contrib.
-
-The project files are then copied into the container, and the Thirdparty libraries are built using the provided `build.sh` script. After that, the FSLAM project is built using CMake, and the `fslam_ros` wrapper is copied and built using catkin.
-
-Finally, the container's entry point is specified, and calibration files are copied into the project directory.
 
 ## Installation
 
@@ -29,26 +30,48 @@ To use this Dockerfile and build the FSLAM project, follow these steps:
 
 1. Install Docker on your machine.
 2. Create a new directory and navigate to it in the terminal.
-3. Copy the Dockerfile and the project files to the created directory.
+3. Clone this repository into the previously created directory.
 4. Open a terminal and navigate to the directory containing the Dockerfile and project files.
-5. Run the following command to build the Docker image:
+```bash
+    cd ~/<YOUR_PATH>/fslam_ros_docker
+```
+6. Run the following command to build the Docker image:
 
 ```bash
     docker build -t fslam .
 ```
+The build will start using the Dockerfile structure, which is divided into multiple stages. 
+In the first stage, it sets up the base image with Ubuntu 20.04 and ROS Noetic using OSRF official noetic image. It also installs the necessary dependencies for catkin tools.
+In the second stage, it installs additional dependencies and the Realsense SDK. These dependencies include various libraries and tools required for camera support, graphics, system functionality, and GUI elements. Additionally, it downloads and extracts third-party libraries, including Ceres Solver and OpenCV with OpenCV Contrib.
+The project files are then copied into the container, and the Thirdparty libraries are built using the provided `build.sh` script. After that, the FSLAM project is built using CMake, and the `fslam_ros` wrapper is copied and built using catkin.
+Finally, the container's entry point is specified, and calibration files are copied into the project directory.
+
 ## Usage
 
-To run the FSLAM project within the Docker container, execute the following command:
+To run the FSLAM project you will need to run two containers of the same image.
+One to to publish images from the camera and the other to run the FSLAM main application.
 
+1. Open two terminals and execute the following command in each:
 ``` bash
-    docker run -it fslam
+    docker run -it --net=host --privileged -e DISPLAY=unix$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:rw --device /dev/video0:/dev/video0  fslam /bin/bash
 ```
-
 This command starts the container and provides an interactive terminal within it.
+
+2. In the first terminal run the following command to open a camera stream through ROS and publish the camera's images unto a ROS topic:
+``` bash
+    roslaunch usb_cam usb_cam-test.launch
+```
+A display window will pop with the camera's stream.
+
+3. In the second terminal, execute this command to run the FSLAM algorithm on the image stream.
+``` bash
+    rosrun fslam_ros fslam_live image:=/usb_cam/image_raw calib=/catkin_ws/src/res/camera.txt gamma=/catkin_ws/src/res/pcalib.txt vignette=/catkin_ws/src/res/vignette.png
+```
+Start moving the camera/computer around and perform SLAM.
 
 ## Features
 
-- Utilizes the FastSLAM algorithm for simultaneous localization and mapping.
+- Utilizes the FSLAM algorithm for simultaneous localization and mapping.
 - Integrates with ROS Noetic and utilizes various ROS functionalities.
 - Supports camera integration, including Realsense cameras.
 - Provides a wrapper for ROS integration and additional functionality.
@@ -64,5 +87,4 @@ Contributions to the FSLAM project are welcome. If you would like to contribute,
 5. Submit a pull request detailing the changes you have made.
 
 ## License
-
 This project is licensed under the [MIT License](LICENSE).
