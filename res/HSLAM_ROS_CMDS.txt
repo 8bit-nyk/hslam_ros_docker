@@ -8,7 +8,9 @@ roslaunch usb_cam usb_cam-test.launch
 roslaunch realsense2_camera rs_camera.launch
 
 #ROS RUN FSLAM USB CAM
-rosrun fslam_ros fslam_live image:=/usb_cam/image_raw calib=/catkin_ws/src/res/camera.txt gamma=/catkin_ws/src/res/pcalib.txt vignette=/catkin_ws/src/res/vignette.png
+rosrun fslam_ros fslam_live image:=/usb_cam/image_raw calib=/catkin_ws/src/res/camera.txt gamma=/catkin_ws/src/res/pcalib.txt vignette=/catkin_ws/src/res/vignette.png 
+#WITH LOOP CLOSURE
+rosrun fslam_ros fslam_live image:=/usb_cam/image_raw calib=/catkin_ws/src/res/camera.txt gamma=/catkin_ws/src/res/pcalib.txt vignette=/catkin_ws/src/res/vignette.png LoopClosure=True vocabPath=/catkin_ws/src/res//orbvoc.dbow3"
 
 #ROS RUN HSLAM with D435 CAM
 rosrun fslam_ros fslam_live image:=/camera/color/image_raw calib=/catkin_ws/src/res/camera.txt gamma=/catkin_ws/src/res/pcalib.txt vignette=/catkin_ws/src/res/vignette.png
