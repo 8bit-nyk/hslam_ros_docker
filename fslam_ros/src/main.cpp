@@ -30,6 +30,7 @@ std::string calib = "";
 std::string vignetteFile = "";
 std::string gammaFile = "";
 std::string saveFile = "";
+std::string vocabPath = "";
 bool useSampleOutput=false;
 
 using namespace HSLAM;
@@ -111,6 +112,23 @@ void parseArgument(char* arg)
 	{
 		gammaFile = buf;
 		printf("loading gammaCalib from %s!\n", gammaFile.c_str());
+		return;
+	}
+
+	if(1==sscanf(arg,"LoopClosure=%d",&option))
+	{
+		if(option==1)
+		{
+			LoopClosure = true;
+			printf("LOOP CLOSURE IS TURNED ON from fslam_ros!\n");
+		}
+		return;
+	}
+
+	if(1==sscanf(arg,"vocabPath=%s",buf))
+	{
+		vocabPath = buf;
+		printf("fslam_ros : loading Vocabulary from %s!\n", vocabPath.c_str());
 		return;
 	}
 

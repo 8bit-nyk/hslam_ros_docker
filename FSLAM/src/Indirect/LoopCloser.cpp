@@ -35,9 +35,10 @@ namespace HSLAM {
 
     void LoopCloser::Run() {
         finished = false;
-
+        printf("needFinish, is :%d \n", needFinish ); //debugNA
         while (1) {
 
+            //std::cout << "loop closer is running" << std::endl;
             if (needFinish) {break; }
 
             {
@@ -74,8 +75,8 @@ namespace HSLAM {
 
             bool loopDetected = DetectLoop();
             if (loopDetected)
-            {
-
+            { 
+                std::cout << "loop detected" << std::endl; //debugNA
                 if (computeSim3())
                 {
                     static Timer loopCorrTime("loopCorr");
@@ -457,7 +458,7 @@ namespace HSLAM {
 
     void LoopCloser::CorrectLoop()
     {
-        cout << "Loop detected!" << endl;
+        std::cout << "Loop detected to be corrected!" << std::endl; //debugNA
 
         // boost::unique_lock<boost::mutex> lck(fullSystem->mapMutex);  //
         auto gMap = globalMap.lock();

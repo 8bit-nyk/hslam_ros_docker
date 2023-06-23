@@ -124,6 +124,7 @@ FullSystem::FullSystem()
 	globalMap = std::make_shared<Map>();
 	matcher = std::make_shared<Matcher>();
 	if(LoopClosure)
+		printf("LOOP CLOSURE ON, from FSLAM/FULLSYSTEM \n");//debugNA
 		loopCloser = std::make_shared<LoopCloser>(this);
 
 	Velocity = SE3();
@@ -503,7 +504,7 @@ Vec5 FullSystem::trackNewCoarse(FrameHessian* fh, bool writePose)
 		coarseTracker->firstCoarseRMSE = achievedRes[0];
 
     if(!setting_debugout_runquiet)
-        printf("Coarse Tracker tracked ab = %f %f (exp %f). Res %f!\n", aff_g2l.a, aff_g2l.b, fh->ab_exposure, achievedRes[0]);
+       // printf("Coarse Tracker tracked ab = %f %f (exp %f). Res %f!\n", aff_g2l.a, aff_g2l.b, fh->ab_exposure, achievedRes[0]);
 
 
 
@@ -1206,7 +1207,7 @@ void FullSystem::mappingLoop()
 }
 
 void FullSystem::blockUntilMappingIsFinished()
-{
+{	printf("Block Unit mapping is finished "); //debugNA
 	boost::unique_lock<boost::mutex> lock(trackMapSyncMutex);
 	runMapping = false;
 	trackedFrameSignal.notify_all();

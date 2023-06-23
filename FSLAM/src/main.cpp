@@ -64,7 +64,8 @@ const cv::String keys =
 
 
 int main(int argc, char **argv)
-{
+{	
+	printf("MAIN is called from FSLAM original"); //debugNA
 	boost::thread exThread = boost::thread(exitThread); // hook crtl+C.
 
 	cv::CommandLineParser parser(argc, argv, keys);
@@ -258,8 +259,10 @@ int main(int argc, char **argv)
         double sInitializerOffset=0;
 
 
-        for(int ii=0;ii<(int)idsToPlay.size(); ii++)
-        {
+        //for(int ii=0;ii<(int)idsToPlay.size(); ii++)
+		for(int ii=0;ii<10; ii++)
+        {	
+			printf("IDs to Play size: %li \n", idsToPlay.size());//debugNA
 			while (Pause)
 			{
 				usleep(5000);
