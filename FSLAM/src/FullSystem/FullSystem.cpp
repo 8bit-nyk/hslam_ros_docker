@@ -124,8 +124,10 @@ FullSystem::FullSystem()
 	globalMap = std::make_shared<Map>();
 	matcher = std::make_shared<Matcher>();
 	if(LoopClosure)
-		printf("LOOP CLOSURE ON, from FSLAM/FULLSYSTEM \n");//debugNA
-		loopCloser = std::make_shared<LoopCloser>(this);
+		{
+			//printf("LOOP CLOSURE ON, from FULLSYSTEM \n");//debugNA
+			loopCloser = std::make_shared<LoopCloser>(this);
+		}
 
 	Velocity = SE3();
 
@@ -1135,11 +1137,11 @@ void FullSystem::deliverTrackedFrame(FrameHessian* fh, bool needKF)
 }
 
 void FullSystem::mappingLoop()
-{
+{	
 	boost::unique_lock<boost::mutex> lock(trackMapSyncMutex);
-
+	
 	while(runMapping)
-	{
+	{   	
 		while(unmappedTrackedFrames.size()==0)
 		{
 			trackedFrameSignal.wait(lock);
@@ -1207,7 +1209,7 @@ void FullSystem::mappingLoop()
 }
 
 void FullSystem::blockUntilMappingIsFinished()
-{	printf("Block Unit mapping is finished "); //debugNA
+{	
 	boost::unique_lock<boost::mutex> lock(trackMapSyncMutex);
 	runMapping = false;
 	trackedFrameSignal.notify_all();
@@ -1221,8 +1223,8 @@ void FullSystem::blockUntilMappingIsFinished()
 		// 	globalMap->lastOptimizeAllKFs();
 		// }
 	}
-
 	mappingThread.join();
+	printf("Mapping Thread has been joined\n"); //debugNA
 
 }
 

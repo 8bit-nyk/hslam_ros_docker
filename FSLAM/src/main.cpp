@@ -259,10 +259,9 @@ int main(int argc, char **argv)
         double sInitializerOffset=0;
 
 
-        //for(int ii=0;ii<(int)idsToPlay.size(); ii++)
-		for(int ii=0;ii<10; ii++)
+        for(int ii=0;ii<(int)idsToPlay.size(); ii++)
         {	
-			printf("IDs to Play size: %li \n", idsToPlay.size());//debugNA
+			//printf("IDs to Play size: %li \n", idsToPlay.size());//debugNA
 			while (Pause)
 			{
 				usleep(5000);

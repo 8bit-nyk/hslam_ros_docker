@@ -35,10 +35,9 @@ namespace HSLAM {
 
     void LoopCloser::Run() {
         finished = false;
-        printf("needFinish, is :%d \n", needFinish ); //debugNA
+        //printf("LoopCloser RUN,  needFinish, is :%d \n", needFinish ); //debugNA
         while (1) {
 
-            //std::cout << "loop closer is running" << std::endl;
             if (needFinish) {break; }
 
             {
@@ -76,7 +75,7 @@ namespace HSLAM {
             bool loopDetected = DetectLoop();
             if (loopDetected)
             { 
-                std::cout << "loop detected" << std::endl; //debugNA
+                //printf("Loop detected"); //debugNA
                 if (computeSim3())
                 {
                     static Timer loopCorrTime("loopCorr");
@@ -96,6 +95,7 @@ namespace HSLAM {
         }
 
         finished = true;
+        //printf("RUN or MainLoop is finished with finished : %i \n", finished);
     }
 
     void LoopCloser::copyActiveMapData(std::vector<std::shared_ptr<Frame>> & _KFs ,std::vector<std::shared_ptr<MapPoint>> & _MPs)
@@ -125,12 +125,13 @@ namespace HSLAM {
 
 
     bool LoopCloser::DetectLoop()
-    {
+    {   
 
         auto gMap = globalMap.lock();
         //If the map contains less than 10 KF or less than 10 KF have passed from last loop detection
         if (currentKF->fs->KfId < mLastLoopKFid + kfGap)
         {
+           // printf("Map contains less than 10 KF or less than 10 KF have passed from last loop detection\n");
             gMap->KfDB->add(currentKF);
             currentKF->SetErase();
             return false;
@@ -159,7 +160,9 @@ namespace HSLAM {
         std::vector<std::shared_ptr<Frame>> vpCandidateKFs = gMap->KfDB->DetectLoopCandidates(currentKF, minScore);
         // If there are no loop candidates, just add new keyframe and return false
         if (vpCandidateKFs.empty())
-        {
+        {   
+            //printf("Detect Loop Candidates Empty, will return FALSE\n"); //debug NA
+
             gMap->KfDB->add(currentKF);
             mvConsistentGroups.clear();
             currentKF->SetErase();
@@ -454,11 +457,12 @@ namespace HSLAM {
 
         KFqueue.clear();
         mLastLoopKFid = 0;
+     //  printf("LoopCloser set to finish, needFinish is %i \n", needFinish);      
     }
 
     void LoopCloser::CorrectLoop()
     {
-        std::cout << "Loop detected to be corrected!" << std::endl; //debugNA
+        printf("Loop detected, to be corrected!");//debugNA
 
         // boost::unique_lock<boost::mutex> lck(fullSystem->mapMutex);  //
         auto gMap = globalMap.lock();

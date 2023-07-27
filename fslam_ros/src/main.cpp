@@ -4,13 +4,18 @@ Based on and inspired by DSO project by Jakob Engel
 
 */
 
-
+#include <thread>
 #include <locale.h>
 #include <signal.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
 
+
+
+#include "IOWrapper/Output3DWrapper.h"
+
+#include <boost/thread.hpp>
 #include "util/settings.h"
 #include "FullSystem/FullSystem.h"
 #include "util/Undistort.h"
@@ -25,6 +30,7 @@ Based on and inspired by DSO project by Jakob Engel
 #include <geometry_msgs/PoseStamped.h>
 #include "cv_bridge/cv_bridge.h"
 
+using namespace HSLAM;
 
 std::string calib = "";
 std::string vignetteFile = "";
@@ -32,8 +38,9 @@ std::string gammaFile = "";
 std::string saveFile = "";
 std::string vocabPath = "";
 bool useSampleOutput=false;
+int mode = 1;
+int preset= 1;
 
-using namespace HSLAM;
 
 void parseArgument(char* arg)
 {
@@ -120,7 +127,7 @@ void parseArgument(char* arg)
 		if(option==1)
 		{
 			LoopClosure = true;
-			printf("LOOP CLOSURE IS TURNED ON from fslam_ros!\n");
+			printf("fslam_ros :LOOP CLOSURE IS TURNED ON!\n");
 		}
 		return;
 	}
@@ -130,6 +137,68 @@ void parseArgument(char* arg)
 		vocabPath = buf;
 		printf("fslam_ros : loading Vocabulary from %s!\n", vocabPath.c_str());
 		return;
+	}
+
+	if (1==sscanf(arg,"mode=%d",&option))
+	{
+		if(option==1)
+		{
+			setting_photometricCalibration = 0;
+			setting_affineOptModeA = 0; //-1: fix. >=0: optimize (with prior, if > 0).
+			setting_affineOptModeB = 0; //-1: fix. >=0: optimize (with prior, if > 0).
+			
+		}
+		if(option==2)
+		{
+			setting_photometricCalibration = 0;
+			setting_affineOptModeA = -1; //-1: fix. >=0: optimize (with prior, if > 0).
+			setting_affineOptModeB = -1; //-1: fix. >=0: optimize (with prior, if > 0).
+			setting_minGradHistAdd = 3;
+
+		}
+	
+	}
+	if (1==sscanf(arg,"preset=%d",&option))
+	{
+		if(option == 0 || option == 1)
+		{
+			printf("DEFAULT settings:\n"
+					"- %s real-time enforcing\n"
+					"- 2000 active points\n"
+					"- 5-7 active frames\n"
+					"- 1-6 LM iteration each KF\n"
+					"- original image resolution\n", preset==0 ? "no " : "1x");
+		}
+		else if(option == 2 || option == 3)
+		{
+			printf("FAST settings:\n"
+					"- %s real-time enforcing\n"
+					"- 800 active points\n"
+					"- 4-6 active frames\n"
+					"- 1-4 LM iteration each KF\n"
+					"- 424 x 320 image resolution\n", preset==0 ? "no " : "5x");
+			setting_desiredImmatureDensity = 600;
+			setting_desiredPointDensity = 800;
+			setting_minFrames = 4;
+			setting_maxFrames = 6;
+			setting_maxOptIterations=4;
+			setting_minOptIterations=1;
+
+			benchmarkSetting_width = 424;
+			benchmarkSetting_height = 320;
+
+			setting_logStuff = false;
+		}
+	}
+	if(LoopClosure && !vocabPath.empty())
+	{
+		Vocab.load(vocabPath.c_str());
+		printf("Loop Closure ON and loading Vocabulary from %s!\n", vocabPath.c_str());
+		if (Vocab.empty())
+		{
+			printf("failed to load vocabulary! Exit\n");
+			exit(1);
+		}
 	}
 
 	printf("could not parse argument \"%s\"!!\n", arg);
@@ -172,14 +241,37 @@ void vidCb(const sensor_msgs::ImageConstPtr img)
 }
 
 
+//NA: Adding interruption code
+bool interrupted = false;
+void interruptHandler(int signal)
+{
+	    interrupted = true;
+}
 
+
+
+//boost exit handler to exit all threads
+void my_exit_handler(int s)
+{
+	printf("Caught signal %d\n",s);
+	exit(1);
+}
+
+void exitThread()
+{
+	struct sigaction sigIntHandler;
+	sigIntHandler.sa_handler = my_exit_handler;
+	sigemptyset(&sigIntHandler.sa_mask);
+	sigIntHandler.sa_flags = 0;
+	sigaction(SIGINT, &sigIntHandler, NULL);
+	while(true) pause();
+}
 
 
 int main( int argc, char** argv )
-{
+{		
+	boost::thread exThread = boost::thread(exitThread); // hook crtl+C.
 	ros::init(argc, argv, "fslam_live");
-
-
 
 	for(int i=1; i<argc;i++) parseArgument(argv[i]);
 
@@ -194,12 +286,6 @@ int main( int argc, char** argv )
 	setting_kfGlobalWeight = 1.3;
 
 
-	printf("MODE WITH CALIBRATION, but without exposure times!\n");
-	setting_photometricCalibration = 2;
-	setting_affineOptModeA = 0;
-	setting_affineOptModeB = 0;
-
-
 
     undistorter = Undistort::getUndistorterForFile(calib, gammaFile, vignetteFile);
 
@@ -211,13 +297,16 @@ int main( int argc, char** argv )
 
     fullSystem = new FullSystem();
     fullSystem->linearizeOperation=false;
-
-
-    if(!disableAllDisplay)
-	    fullSystem->outputWrapper.push_back(new IOWrap::PangolinDSOViewer(
+	
+	
+	IOWrap::PangolinDSOViewer* viewer = 0;
+	if(!disableAllDisplay)
+    {
+        viewer = new IOWrap::PangolinDSOViewer(
 	    		 (int)undistorter->getSize()[0],
-	    		 (int)undistorter->getSize()[1]));
-
+	    		 (int)undistorter->getSize()[1]);
+        fullSystem->outputWrapper.push_back(viewer);
+    }
 
     if(useSampleOutput)
         fullSystem->outputWrapper.push_back(new IOWrap::SampleOutputWrapper());
@@ -227,19 +316,77 @@ int main( int argc, char** argv )
     	fullSystem->setGammaFunction(undistorter->photometricUndist->getG());
 
     ros::NodeHandle nh;
+	//ros::Rate loop_rate(10);
     ros::Subscriber imgSub = nh.subscribe("image", 1, &vidCb);
 
-    ros::spin();
-    fullSystem->printResult(saveFile); 
+    //NA: replacing ros_spin with interruptable sequence
+    //ros::spin();
+	
+    signal(SIGINT, interruptHandler);
+
+	while (ros::ok() && !interrupted) //&& frameID <999999 NA
+		{	
+			//printf("ROS IS OKAY!");
+			//printf("FrameID: %d ",frameID);
+			ros::spinOnce();
+			//loop_rate.sleep();
+			if(viewer!=0 && viewer->isDead)
+					break;
+			
+			if(fullSystem->isLost)
+            {
+                printf("LOST!!\n");
+                break;
+            }
+			
+			
+			if(fullSystem->initFailed || setting_fullResetRequested)
+            {
+                printf("RESETTING!\n");
+				std::vector<IOWrap::Output3DWrapper*> wraps = fullSystem->outputWrapper;
+				for(IOWrap::Output3DWrapper* ow : wraps) ow->reset();
+				usleep(20000); //hack - wait for display wrapper to clean up.
+				if(fullSystem)
+				{
+					delete fullSystem;
+					fullSystem = nullptr;
+				}
+					
+				fullSystem = new FullSystem();
+    			fullSystem->setGammaFunction(undistorter->photometricUndist->getG());
+				fullSystem->linearizeOperation = false;
+
+				fullSystem->outputWrapper = wraps;
+
+				setting_fullResetRequested=false;
+            }
+			
+			
+		}
+	fullSystem->blockUntilMappingIsFinished();
+
+	printf("fslam_ros main cpp has been interuppted.\n"); //debug NA
+	ros::shutdown();
+	ros::waitForShutdown();
+	fullSystem->BAatExit();
+			
+	
+	fullSystem->printResult("result.txt"); 
+	//if(viewer != 0)
+	//    viewer->run();
+	//Clean-up and exit
     for(IOWrap::Output3DWrapper* ow : fullSystem->outputWrapper)
     {
+		//printf("DELETE VIEWER IO wrapper\n");
         ow->join();
         delete ow;
     }
 
-    delete undistorter;
-    delete fullSystem;
-
+	printf("DELETE FULLSYSTEM!\n");
+	delete fullSystem;
+	printf("DELETE Undistorter\n");
+	delete undistorter;
+	printf("EXIT NOW\n");
 	return 0;
 }
 
