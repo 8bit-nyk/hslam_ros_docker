@@ -53,6 +53,11 @@ Finally, the container's entry point is specified, and calibration files are cop
 To run the FSLAM project you will need to run two containers of the same image.
 One to to publish images from the camera and the other to run the FSLAM main application.
 
+0. Allow access to containers:
+``` bash
+    xhost +
+```
+
 1. Open two terminals and execute the following command in each:
 ``` bash
     docker run -it --net=host --privileged -e DISPLAY=unix$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:rw --device /dev/video0:/dev/video0  fslam /bin/bash
