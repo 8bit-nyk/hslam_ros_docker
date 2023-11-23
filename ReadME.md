@@ -1,6 +1,6 @@
 # Project Title
 
-FSLAM (Fusion Simultaneous Localization and Mapping) Project.
+HSLAM (Hybrid Simultaneous Localization and Mapping) Project.
 
 A containerized "ready-to-use" SLAM application that leverages both direct and indirect methods.
 
