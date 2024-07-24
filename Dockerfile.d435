@@ -70,18 +70,18 @@ WORKDIR /catkin_ws/src/HSLAM/Thirdparty
 # Copy Thirdparty folder to the container
 COPY Thirdparty /catkin_ws/src/HSLAM/Thirdparty
 #Download additional thirdparty libraries
-ARG cvVersion=3.4.6
-ARG DL_opencv="https://github.com/opencv/opencv/archive/${cvVersion}.zip"
-ARG DL_contrib="https://github.com/opencv/opencv_contrib/archive/${cvVersion}.zip"
-RUN wget ceres-solver.org/ceres-solver-1.14.0.tar.gz \
-    && tar -zxf ceres-solver-1.14.0.tar.gz \
-    && wget -O opencv.zip -nc "${DL_opencv}" \
-    && unzip opencv.zip \
-    && rm opencv.zip \
-    && cd opencv-3.4.6 \
-    && wget -O opencv_contrib.zip -nc "${DL_contrib}" \
-    && unzip opencv_contrib.zip \
-    && rm opencv_contrib.zip
+# ARG cvVersion=3.4.6
+# ARG DL_opencv="https://github.com/opencv/opencv/archive/${cvVersion}.zip"
+# ARG DL_contrib="https://github.com/opencv/opencv_contrib/archive/${cvVersion}.zip"
+# RUN wget ceres-solver.org/ceres-solver-1.14.0.tar.gz \
+#     && tar -zxf ceres-solver-1.14.0.tar.gz \
+#     && wget -O opencv.zip -nc "${DL_opencv}" \
+#     && unzip opencv.zip \
+#     && rm opencv.zip \
+#     && cd opencv-3.4.6 \
+#     && wget -O opencv_contrib.zip -nc "${DL_contrib}" \
+#     && unzip opencv_contrib.zip \
+#     && rm opencv_contrib.zip
 #build Thirparty libraries using script(cmake)
 RUN chmod +x build.sh && ./build.sh
 #Copy project files
