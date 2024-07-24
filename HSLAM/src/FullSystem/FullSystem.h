@@ -15,6 +15,8 @@
 #include "util/IndexThreadReduce.h"
 #include "OptimizationBackend/EnergyFunctional.h"
 #include "FullSystem/PixelSelector2.h"
+#include <pcl/io/pcd_io.h>
+#include <pcl/point_types.h>
 
 #include <math.h>
 
@@ -129,6 +131,11 @@ public:
 	float optimize(int mnumOptIts);
 
 	void printResult(std::string file, bool printSim = false);
+	void saveMap(std::string file, bool printSim = false);
+
+	std::vector<SE3> getPath();
+	std::vector<Eigen::Vector3f> getMap();
+
 
 	void debugPlot(std::string name);
 

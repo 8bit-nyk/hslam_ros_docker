@@ -1,7 +1,14 @@
 SET(PROJECT_NAME HSLAM)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.9)
+
+set(OpenCV_DIR /catkin_ws/src/HSLAM/Thirdparty/CompiledLibs/share/OpenCV)
+set(CMAKE_PREFIX_PATH /catkin_ws/src/HSLAM/Thirdparty/CompiledLibs/lib/cmake)
+
+# Ensure these paths are set correctly before calling project()
+message ("OPENCV Directory: ${OpenCV_DIR}")
+message("The CMAKE prefix path is: ${CMAKE_PREFIX_PATH}")
 
 PROJECT(${PROJECT_NAME})
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 #set(CMAKE_VERBOSE_MAKEFILE ON)
 
 
@@ -11,28 +18,26 @@ set(BUILD_TYPE RelWithDebInfo)
 set(EXECUTABLE_OUTPUT_PATH bin)
 set(LIBRARY_OUTPUT_PATH lib)
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
-
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
-set(OpenCV_DIR /catkin_ws/src/HSLAM/Thirdparty/CompiledLibs/share/OpenCV)
-message ("OPENCV Directory: ${OpenCV_DIR}")
-message("OpenCV_LIBS=${OpenCV_LIBS}")
-set(CMAKE_PREFIX_PATH /catkin_ws/src/HSLAM/Thirdparty/CompiledLibs/lib/cmake)
-message ("The CMAKE prefix path is: ${CMAKE_PREFIX_PATH}")
 
 # required libraries
 find_package(SuiteParse REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(Boost COMPONENTS system thread) 
-#find_package(OpenCV 3.4.6 REQUIRED)
-find_package(OpenCV 3.4.6 REQUIRED PATHS /catkin_ws/src/HSLAM/Thirdparty/CompiledLibs NO_DEFAULT_PATH)
+find_package(OpenCV 3.4.6 REQUIRED)
+#find_package(OpenCV 3.4.6 REQUIRED PATHS /catkin_ws/src/HSLAM/Thirdparty/CompiledLibs NO_DEFAULT_PATH)
 find_package(G2O REQUIRED)
-find_package(DBoW3 REQUIRED) #PATHS ~/catkin_ws/src/HSLAM/Thirdparty/CompiledLibs)
+find_package(DBoW3 REQUIRED) #PATHS  ~/catkin_ws/src/HSLAM/Thirdparty/CompiledLibs)
 
 # optional libraries
 find_package(LibZip QUIET)
-find_package(Pangolin 0.2 QUIET)# PATHS ~/catkin_ws/src/HSLAM/Thirdparty/CompiledLibs)
+find_package(Pangolin 0.2 QUIET)# PATHS  ~/catkin_ws/src/HSLAM/Thirdparty/CompiledLibs)
+
+#pcl libraries
+find_package(PCL 1.8 REQUIRED)
+
 
 
 # flags
@@ -97,6 +102,7 @@ include_directories(
   ${PROJECT_SOURCE_DIR}/Thirdparty/sse2neon
   ${EIGEN3_INCLUDE_DIR}
   ${G2O_INCLUDE_DIR}
+  ${PCL_INCLUDE_DIRS}
 ) 
 
 
@@ -164,6 +170,7 @@ set(LIBS
   ${Pangolin_LIBRARIES}
   ${DBoW3_LIB_DIR}/libDBoW3.so
   ${BOOST_THREAD_LIBRARY}
+  ${PCL_LIBRARIES}
   boost_system
   cxsparse
   cholmod

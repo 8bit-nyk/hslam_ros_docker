@@ -6,6 +6,8 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   sensor_msgs
   cv_bridge
+  pcl_conversions
+
 )
 
 #SET PATH TO HSLAM
@@ -58,7 +60,7 @@ set(CMAKE_MODULE_PATH /catkin_ws/src/hslam_ros/cmake)
 set(OpenCV_DIR /catkin_ws/src/HSLAM/Thirdparty/CompiledLibs/share/OpenCV)
 set(Pangolin_DIR /catkin_ws/src/HSLAM/Thirdparty/CompiledLibs/lib/cmake)
 set(DBoW3_DIR /catkin_ws/src/HSLAM/Thirdparty/CompiledLibs/lib/cmake/DBoW3)
-set(G2O_DIR "/catkin_ws/src/HSLAM/Thirdparty/CompiledLibs/lib/cmake/g2o")
+set(G2O_DIR /catkin_ws/src/HSLAM/Thirdparty/CompiledLibs/lib/cmake/g2o)
 
 
 find_package(Pangolin 0.2 REQUIRED PATHS /catkin_ws/src/HSLAM/Thirdparty/CompiledLibs/lib/cmake)
@@ -84,12 +86,12 @@ find_package(Boost COMPONENTS system thread)
 
 #G2O not found troubleshooting
 find_package(G2O COMPONENTS)
-#message("-----G2O troubleshooting-----")
-#message("The G2O directory is : ${G2O_DIR}" )
-#message("The G2O include  directory is : ${G2O_INCLUDE_DIR}" )
-#message("The G2O libraries is : ${G2O_LIBS}" )
+message("-----G2O troubleshooting-----")
+message("The G2O directory is : ${G2O_DIR}" )
+message("The G2O include  directory is : ${G2O_INCLUDE_DIR}" )
+message("The G2O libraries is : ${G2O_LIBS}" )
 #find_package(G2O REQUIRED COMPONENTS PATHS /catkin_ws/src/HSLAM/Thirdparty/CompiledLibs/lib/cmake/g2o)
-message ("The following were consodered for g2o: ${G2O_CONSIDERED_CONFIGS}")
+message ("The following were considered for g2o: ${G2O_CONSIDERED_CONFIGS}")
 message("\n\n---- FOUND G2O Headers at\n\"${G2O_INCLUDE_DIR}\"")
 message("---- FOUND G2O Libs at\n\"${G2O_LIBS}\"")
 
@@ -97,6 +99,7 @@ catkin_package(
   CATKIN_DEPENDS
     geometry_msgs
     roscpp
+    pcl_conversions
     sensor_msgs
     cv_bridge
 )
@@ -144,7 +147,24 @@ link_directories(
 ## Declare a C++ executable
 add_executable(hslam_live src/main.cpp)
 
+
 target_link_libraries(hslam_live
+    ${HSLAM_LIBRARY}
+    ${Pangolin_LIBRARIES}
+    ${OpenCV_LIBS}
+    ${G2O_LIBS}
+    ${DBoW3_LIB_DIR}/libDBoW3.so
+    ${catkin_LIBRARIES}
+    ${CSPARSE_LIBRARY}
+    ${CHOLMOD_LIBRARIES}
+    
+   )
+
+   ## Declare a C++ executable
+add_executable(hslam_live_2 src/main-2.cpp)
+
+
+target_link_libraries(hslam_live_2
     ${HSLAM_LIBRARY}
     ${Pangolin_LIBRARIES}
     ${OpenCV_LIBS}

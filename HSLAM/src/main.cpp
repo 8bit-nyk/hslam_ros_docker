@@ -68,6 +68,7 @@ int main(int argc, char **argv)
 	printf("MAIN is called from HSLAM original"); //debugNA
 	boost::thread exThread = boost::thread(exitThread); // hook crtl+C.
 
+	//Parse the arguments given.
 	cv::CommandLineParser parser(argc, argv, keys);
 	std::string vignette = parser.get<std::string>("vignette");
 	std::string gammaCalib = parser.get<std::string>("gamma");
@@ -89,16 +90,19 @@ int main(int argc, char **argv)
 	int mode =  parser.get<int>("mode");
 	float playbackSpeed = parser.get<float>("speed"); // 0 for linearize (play as fast as possible, while sequentializing tracking & mapping). otherwise, factor on timestamps.
 	
+	// Print help info and exit
 	if (parser.has("help") || parser.has("h") || parser.has("usage") || parser.has("?"))
 	{
     	parser.printMessage();
     	return 0;
 	}
 
+	//Print error message and exit.
 	if(source.empty() || calib.empty()) { std::cout<< "path to images or calibration not provided! cannot function without them. exit." << std::endl; return(0);}
 
 	if (!parser.check()) {parser.printErrors(); return 0; }
 
+	//This is only here to silence the compiler
 	if (debugSaveImages)
 	{
 		if(42==system("rm -rf images_out")) std::cout<<"system call returned 42 - what are the odds?. This is only here to shut up the compiler.\n"<<std::endl;
@@ -107,6 +111,7 @@ int main(int argc, char **argv)
 			if(42==system("mkdir images_out")) std::cout<<"system call returned 42 - what are the odds?. This is only here to shut up the compiler.\n"<<std::endl;
 	}
 
+	//setup mode parameters
 	switch (mode)
 	{
 	case 1:
@@ -124,6 +129,7 @@ int main(int argc, char **argv)
 		break;
 	}
 
+	//Load vocab necessary for loop closure. if no vocab path is given loopclosure is disabled.
 	if(LoopClosure && !vocabPath.empty())
 	{
 		Vocab.load(vocabPath.c_str());
@@ -141,6 +147,7 @@ int main(int argc, char **argv)
 		LoopClosure = false; 
 	}
 
+	// set playback speed
 	if(preset == 0 || preset == 1)
 	{
 		printf("DEFAULT settings:\n"
@@ -177,11 +184,13 @@ int main(int argc, char **argv)
 		setting_logStuff = false;
 	}
 	
-
+	//set frame size based on undist_width and height. (from size in calib ) 
+	//set geometric calib from calib file (k matrix and size)
 	ImageFolderReader* reader = new ImageFolderReader(source, calib, gammaCalib, vignette);
 	reader->setGlobalCalibration();
 	set_frame_sz(reader->get_undist_width(), reader->get_undist_height());
 
+	// check for error in providing photometric params
 	if(setting_photometricCalibration > 0 && reader->getPhotometricGamma() == 0)
 	{
 		printf("ERROR: dont't have photometric calibation. Need to use commandline options mode=1 or mode=2 ");
@@ -189,6 +198,7 @@ int main(int argc, char **argv)
 	}
 
 
+	// set arguments for reverse execution if requested.
 	int lstart=startIndex;
 	int lend = endIndex;
 	int linc = 1;
@@ -204,7 +214,7 @@ int main(int argc, char **argv)
 	}
 
 
-
+	// Populate the System, photocalib, speed,viewer
 	FullSystem* fullSystem = new FullSystem();
 	fullSystem->setGammaFunction(reader->getPhotometricGamma());
 	fullSystem->linearizeOperation = (playbackSpeed == 0);
@@ -226,6 +236,7 @@ int main(int argc, char **argv)
     std::thread runthread([&]() {
         std::vector<int> idsToPlay;
         std::vector<double> timesToPlayAt;
+		//populate timesToPlayAt and idsToPlay vector.
         for(int i=lstart;i>= 0 && i< reader->getNumImages() && linc*i < linc*lend;i+=linc)
         {
             idsToPlay.push_back(i);
@@ -241,7 +252,7 @@ int main(int argc, char **argv)
             }
         }
 
-
+		//load all images
         std::vector<ImageAndExposure*> preloadedImages;
         if(preload)
         {
@@ -285,7 +296,7 @@ int main(int argc, char **argv)
                 img = reader->getImage(i);
 
 
-
+			//setting frame speed and deciding wether a frame should be skipped or no.
             bool skipFrame=false;
             if(playbackSpeed!=0)
             {
@@ -306,11 +317,13 @@ int main(int argc, char **argv)
 			
 
 			delete img;
-	
+
+			//exit if pangolin is dead
 			if(viewer!=0)
 				if(viewer->isDead)
 					break;
 
+			//reset if init failed or reset requested
 	        if(fullSystem->initFailed || setting_fullResetRequested)
             {
                 if(ii < 250 || setting_fullResetRequested)
@@ -335,6 +348,7 @@ int main(int argc, char **argv)
                 }
             }
 
+			//exit if lost
             if(fullSystem->isLost)
             {
                 printf("LOST!!\n");
@@ -350,6 +364,7 @@ int main(int argc, char **argv)
 
 
         fullSystem->printResult("result.txt");
+        fullSystem->saveMap("map.pcd");
 
 
         int numFramesProcessed = abs(idsToPlay[0]-idsToPlay.back());
@@ -382,9 +397,11 @@ int main(int argc, char **argv)
     });
 
 
+	// run the viewer
 	if(viewer != 0)
 	    viewer->run();
 
+	//add the main thread
 	runthread.join();
 
 	for(IOWrap::Output3DWrapper* ow : fullSystem->outputWrapper)

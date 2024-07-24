@@ -38,6 +38,8 @@
 
 #include <cmath>
 
+
+
 namespace HSLAM
 {
 int FrameHessian::instanceCounter=0;
@@ -328,6 +330,68 @@ void FullSystem::printResult(std::string file, bool printSim)
 			" " << Twc.so3().unit_quaternion().w() << "\n";
 	}
 	myfile.close();
+}
+
+std::vector<Eigen::Vector3f> FullSystem::getMap()
+{
+
+    std::vector<Eigen::Vector3f> points;
+	//boost::unique_lock<boost::mutex> lock(trackMutex);
+
+
+	for (auto it : allKeyFramesHistory)
+	{
+		if(!it->frame)
+			continue;
+		auto kfPts = it->frame->getMapPointsV();
+		for (int i = 0, iend = kfPts.size(); i < iend; ++i)
+			if (kfPts[i])
+			{
+				auto status = kfPts[i]->getDirStatus(); //active, marginalized, removed
+				if (status == MapPoint::active){
+					Eigen::Vector3f point;
+					point.x()=kfPts[i]->getWorldPose().x();
+					point.y()=kfPts[i]->getWorldPose().y();
+					point.z()=kfPts[i]->getWorldPose().z();
+					points.push_back(point);
+
+				}
+				else if (status == MapPoint::marginalized){
+					Eigen::Vector3f point;
+					point.x()=kfPts[i]->getWorldPose().x();
+					point.y()=kfPts[i]->getWorldPose().y();
+					point.z()=kfPts[i]->getWorldPose().z();
+					points.push_back(point);
+				}
+			}
+		}
+
+	return points;
+}
+
+
+
+std::vector<SE3> FullSystem::getPath()
+{
+    // Define a 3D point as a vector of three floats
+	SE3 Twc;
+    // Create a vector to store 3D points
+    std::vector<SE3> points;
+	boost::unique_lock<boost::mutex> lock(trackMutex);
+
+
+	for(FrameShell* s : allFrameHistory)
+	{
+		if(!s->poseValid) 
+			continue;
+
+		if(setting_onlyLogKFPoses && s->marginalizedAt == s->id) 
+			continue;
+		Twc = s->getPose();
+		points.push_back(Twc);
+	}
+	return points;
+
 }
 
 
@@ -2429,6 +2493,28 @@ void FullSystem::BAatExit()
 	BundleAdjustment(allKFrames, allMapPoints, 10, &stopGBA, true, true, currMaxKF, currMaxKF - 15, currMaxMp);
 	for (auto it : allKeyFramesHistory)
 	    it->setRefresh(true);
+}
+
+
+
+void FullSystem::saveMap(std::string file, bool printSim)
+{
+
+	std::vector<Eigen::Vector3f> map_points=getMap();
+	pcl::PointCloud<pcl::PointXYZ> cloud_out;
+
+	for (size_t i = 0; i < map_points.size(); i++)
+	{
+		pcl::PointXYZ point;
+		point.x=map_points[i].x();
+		point.y=map_points[i].y();
+		point.z=map_points[i].z();
+		cloud_out.push_back(point);
+	}
+	    // Save the PCL point cloud to a PCD file
+    pcl::PCDWriter writer;
+    writer.write(file, cloud_out);
+
 }
 
 

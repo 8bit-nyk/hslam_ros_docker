@@ -75,7 +75,7 @@ namespace HSLAM {
             bool loopDetected = DetectLoop();
             if (loopDetected)
             { 
-                //printf("Loop detected"); //debugNA
+                printf("Loop detected"); //debugNA
                 if (computeSim3())
                 {
                     static Timer loopCorrTime("loopCorr");

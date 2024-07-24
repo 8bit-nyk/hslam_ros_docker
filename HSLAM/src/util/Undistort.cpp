@@ -71,14 +71,14 @@ PhotometricUndistorter::PhotometricUndistorter(
 
         for(int i=0;i<GDepth;i++) G[i] = Gvec[i];
 
-        for(int i=0;i<GDepth-1;i++)
-		{
-			if(G[i+1] <= G[i])
-			{
-				printf("PhotometricUndistorter: G invalid! it has to be strictly increasing, but it isnt!\n");
-				return;
-			}
-		}
+        // for(int i=0;i<GDepth-1;i++)
+		// {
+		// 	if(G[i+1] <= G[i])
+		// 	{
+		// 		printf("PhotometricUndistorter: G invalid! it has to be strictly increasing, but it isnt!\n");
+		// 		return;
+		// 	}
+		// }
 
 		float min=G[0];
         float max=G[GDepth-1];
