@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.4.6)
-project(fslam_ros)
+project(hslam_ros)
 
 find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
@@ -8,64 +8,64 @@ find_package(catkin REQUIRED COMPONENTS
   cv_bridge
 )
 
-#SET PATH TO FSLAM
+#SET PATH TO HSLAM
 
-set(FSLAM_PATH /catkin_ws/src/FSLAM)
-#set(FSLAM_LIBRARY_PATH ~/catkin_ws/src/FSLAM/lib)
-set(FSLAM_LIBRARY_PATH /catkin_ws/src/FSLAM/build/lib)
+set(HSLAM_PATH /catkin_ws/src/HSLAM)
+#set(HSLAM_LIBRARY_PATH ~/catkin_ws/src/HSLAM/lib)
+set(HSLAM_LIBRARY_PATH /catkin_ws/src/HSLAM/build/lib)
 
 # set values from environment variables
-if (NOT FSLAM_PATH)
-    set(FSLAM_PATH $ENV{FSLAM_PATH})
+if (NOT HSLAM_PATH)
+    set(HSLAM_PATH $ENV{HSLAM_PATH})
 endif()
-if (NOT FSLAM_LIBRARY_PATH)
-    set(FSLAM_LIBRARY_PATH $ENV{FSLAM_LIBRARY_PATH})
-    if (NOT FSLAM_LIBRARY_PATH AND FSLAM_PATH)
-        set(FSLAM_LIBRARY_PATH "${FSLAM_PATH}/build/lib")
+if (NOT HSLAM_LIBRARY_PATH)
+    set(HSLAM_LIBRARY_PATH $ENV{HSLAM_LIBRARY_PATH})
+    if (NOT HSLAM_LIBRARY_PATH AND HSLAM_PATH)
+        set(HSLAM_LIBRARY_PATH "${HSLAM_PATH}/build/lib")
     endif()
 endif()
 
-if (FSLAM_PATH)
-    # Manually set path to FSLAM source folder
-    message("FSLAM_PATH set, trying to find library.")
-    message("---- EXPECTING FSLAM sources at\n\"${FSLAM_PATH}\"")
-    set(FSLAM_INCLUDE_DIRS "${FSLAM_PATH}/src" "${FSLAM_PATH}/Thirdparty/Sophus" "${FSLAM_PATH}/Thirdparty/g2o" "${FSLAM_PATH}/Thirdparty/DBow3" "${FSLAM_PATH}/Thirdparty/opencv-3.4.6")
-    message("---- LOOKING FOR FSLAM library at\n\"${FSLAM_LIBRARY_PATH}\"")
-    find_library(FSLAM_LIBRARY HSLAM_lib ${FSLAM_LIBRARY_PATH})
+if (HSLAM_PATH)
+    # Manually set path to HSLAM source folder
+    message("HSLAM_PATH set, trying to find library.")
+    message("---- EXPECTING HSLAM sources at\n\"${HSLAM_PATH}\"")
+    set(HSLAM_INCLUDE_DIRS "${HSLAM_PATH}/src" "${HSLAM_PATH}/Thirdparty/Sophus" "${HSLAM_PATH}/Thirdparty/g2o" "${HSLAM_PATH}/Thirdparty/DBow3" "${HSLAM_PATH}/Thirdparty/opencv-3.4.6")
+    message("---- LOOKING FOR HSLAM library at\n\"${HSLAM_LIBRARY_PATH}\"")
+    find_library(HSLAM_LIBRARY HSLAM_lib ${HSLAM_LIBRARY_PATH})
 else()
-    # Detect FSLAM install (also catkin devel folder)
-    message("FSLAM_PATH not set yet, trying to find installed fslam headers and library.")
-    find_path(FSLAM_INCLUDE_DIRS FSLAM)
-    if (FSLAM_INCLUDE_DIRS)
-        set(FSLAM_INCLUDE_DIRS "${FSLAM_INCLUDE_DIRS}/FSLAM")
-        message("---- FOUND FSLAM headers at \"${FSLAM_INCLUDE_DIRS}\"")
+    # Detect HSLAM install (also catkin devel folder)
+    message("HSLAM_PATH not set yet, trying to find installed hslam headers and library.")
+    find_path(HSLAM_INCLUDE_DIRS HSLAM)
+    if (HSLAM_INCLUDE_DIRS)
+        set(HSLAM_INCLUDE_DIRS "${HSLAM_INCLUDE_DIRS}/HSLAM")
+        message("---- FOUND HSLAM headers at \"${HSLAM_INCLUDE_DIRS}\"")
     endif()
-    find_library(FSLAM_LIBRARY fslam)
+    find_library(HSLAM_LIBRARY hslam)
 endif()
 
 
-if (NOT FSLAM_INCLUDE_DIRS)
-    message(FATAL_ERROR "FSLAM headers not found and/or FSLAM_PATH not set.")
+if (NOT HSLAM_INCLUDE_DIRS)
+    message(FATAL_ERROR "HSLAM headers not found and/or HSLAM_PATH not set.")
 endif()
-if (NOT FSLAM_LIBRARY)
-    message(FATAL_ERROR "FSLAM library not found and/or FSLAM_LIBRARY_PATH not set.")
+if (NOT HSLAM_LIBRARY)
+    message(FATAL_ERROR "HSLAM library not found and/or HSLAM_LIBRARY_PATH not set.")
 endif()
 
-message("---- Found FSLAM library at \"${FSLAM_LIBRARY}\"")
+message("---- Found HSLAM library at \"${HSLAM_LIBRARY}\"")
 
 
-set(CMAKE_MODULE_PATH /catkin_ws/src/fslam_ros/cmake)
-set(OpenCV_DIR /catkin_ws/src/FSLAM/Thirdparty/CompiledLibs/share/OpenCV)
-set(Pangolin_DIR /catkin_ws/src/FSLAM/Thirdparty/CompiledLibs/lib/cmake)
-set(DBoW3_DIR /catkin_ws/src/FSLAM/Thirdparty/CompiledLibs/lib/cmake/DBoW3)
-set(G2O_DIR "/catkin_ws/src/FSLAM/Thirdparty/CompiledLibs/lib/cmake/g2o")
+set(CMAKE_MODULE_PATH /catkin_ws/src/hslam_ros/cmake)
+set(OpenCV_DIR /catkin_ws/src/HSLAM/Thirdparty/CompiledLibs/share/OpenCV)
+set(Pangolin_DIR /catkin_ws/src/HSLAM/Thirdparty/CompiledLibs/lib/cmake)
+set(DBoW3_DIR /catkin_ws/src/HSLAM/Thirdparty/CompiledLibs/lib/cmake/DBoW3)
+set(G2O_DIR "/catkin_ws/src/HSLAM/Thirdparty/CompiledLibs/lib/cmake/g2o")
 
 
-find_package(Pangolin 0.2 REQUIRED PATHS /catkin_ws/src/FSLAM/Thirdparty/CompiledLibs/lib/cmake)
+find_package(Pangolin 0.2 REQUIRED PATHS /catkin_ws/src/HSLAM/Thirdparty/CompiledLibs/lib/cmake)
 message("\n\n---- FOUND Pangolin Headers at\n\"${Pangolin_INCLUDE_DIRS}\"")
 message("---- FOUND Pangolin Libs at\n\"${Pangolin_LIBRARIES}\"")
 
-find_package(OpenCV 3.4.6 REQUIRED PATHS /catkin_ws/src/FSLAM/Thirdparty/CompiledLibs/lib/cmake)
+find_package(OpenCV 3.4.6 REQUIRED PATHS /catkin_ws/src/HSLAM/Thirdparty/CompiledLibs/lib/cmake)
 message("\n\n---- FOUND OpenCV Headers at\n\"${OpenCV_INCLUDE_DIRS}\"")
 message("---- FOUND OpenCV Libs at\n\"${OpenCV_LIBS}\"")
 
@@ -88,7 +88,7 @@ find_package(G2O COMPONENTS)
 #message("The G2O directory is : ${G2O_DIR}" )
 #message("The G2O include  directory is : ${G2O_INCLUDE_DIR}" )
 #message("The G2O libraries is : ${G2O_LIBS}" )
-#find_package(G2O REQUIRED COMPONENTS PATHS /catkin_ws/src/FSLAM/Thirdparty/CompiledLibs/lib/cmake/g2o)
+#find_package(G2O REQUIRED COMPONENTS PATHS /catkin_ws/src/HSLAM/Thirdparty/CompiledLibs/lib/cmake/g2o)
 message ("The following were consodered for g2o: ${G2O_CONSIDERED_CONFIGS}")
 message("\n\n---- FOUND G2O Headers at\n\"${G2O_INCLUDE_DIR}\"")
 message("---- FOUND G2O Libs at\n\"${G2O_LIBS}\"")
@@ -123,7 +123,7 @@ set(CMAKE_CXX_FLAGS "-std=c++14 -march=native"
 
 include_directories(
   ${PROJECT_SOURCE_DIR}/src
-  ${FSLAM_INCLUDE_DIRS}
+  ${HSLAM_INCLUDE_DIRS}
   ${Pangolin_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS}
   ${EIGEN3_INCLUDE_DIR}
@@ -142,10 +142,10 @@ link_directories(
   ${CHOLMOD_INCLUDE_DIR}
 )
 ## Declare a C++ executable
-add_executable(fslam_live src/main.cpp)
+add_executable(hslam_live src/main.cpp)
 
-target_link_libraries(fslam_live
-    ${FSLAM_LIBRARY}
+target_link_libraries(hslam_live
+    ${HSLAM_LIBRARY}
     ${Pangolin_LIBRARIES}
     ${OpenCV_LIBS}
     ${G2O_LIBS}

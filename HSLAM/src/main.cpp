@@ -65,7 +65,7 @@ const cv::String keys =
 
 int main(int argc, char **argv)
 {	
-	printf("MAIN is called from FSLAM original"); //debugNA
+	printf("MAIN is called from HSLAM original"); //debugNA
 	boost::thread exThread = boost::thread(exitThread); // hook crtl+C.
 
 	cv::CommandLineParser parser(argc, argv, keys);
