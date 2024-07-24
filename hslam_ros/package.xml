@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <package>
-  <name>fslam_ros</name>
+  <name>hslam_ros</name>
   <version>1.0.0</version>
   <description>
 
-    ROS Wrapper FSLAM.
+    ROS Wrapper HSLAM.
 
   </description>
 

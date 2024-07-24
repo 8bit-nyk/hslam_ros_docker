@@ -127,7 +127,7 @@ void parseArgument(char* arg)
 		if(option==1)
 		{
 			LoopClosure = true;
-			printf("fslam_ros :LOOP CLOSURE IS TURNED ON!\n");
+			printf("hslam_ros :LOOP CLOSURE IS TURNED ON!\n");
 		}
 		return;
 	}
@@ -135,7 +135,7 @@ void parseArgument(char* arg)
 	if(1==sscanf(arg,"vocabPath=%s",buf))
 	{
 		vocabPath = buf;
-		printf("fslam_ros : loading Vocabulary from %s!\n", vocabPath.c_str());
+		printf("hslam_ros : loading Vocabulary from %s!\n", vocabPath.c_str());
 		return;
 	}
 
@@ -233,7 +233,7 @@ void vidCb(const sensor_msgs::ImageConstPtr img)
 
 	MinimalImageB minImg((int)cv_ptr->image.cols, (int)cv_ptr->image.rows,(unsigned char*)cv_ptr->image.data);
 	ImageAndExposure* undistImg = undistorter->undistort<unsigned char>(&minImg, 1,0, 1.0f);
-	undistImg->timestamp=img->header.stamp.toSec(); // relay the timestamp to FSLAM
+	undistImg->timestamp=img->header.stamp.toSec(); // relay the timestamp to HSLAM
 	fullSystem->addActiveFrame(undistImg, frameID);
 	frameID++;
 	delete undistImg;
@@ -271,7 +271,7 @@ void exitThread()
 int main( int argc, char** argv )
 {		
 	boost::thread exThread = boost::thread(exitThread); // hook crtl+C.
-	ros::init(argc, argv, "fslam_live");
+	ros::init(argc, argv, "hslam_live");
 
 	for(int i=1; i<argc;i++) parseArgument(argv[i]);
 
@@ -365,7 +365,7 @@ int main( int argc, char** argv )
 		}
 	fullSystem->blockUntilMappingIsFinished();
 
-	printf("fslam_ros main cpp has been interuppted.\n"); //debug NA
+	printf("hslam_ros main cpp has been interuppted.\n"); //debug NA
 	ros::shutdown();
 	ros::waitForShutdown();
 	fullSystem->BAatExit();

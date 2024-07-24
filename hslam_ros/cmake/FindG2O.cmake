@@ -1,5 +1,5 @@
 # Find the header files
-Set(PROJECT_SOURCE_DIR /catkin_ws/src/FSLAM)
+Set(PROJECT_SOURCE_DIR /catkin_ws/src/HSLAM)
 Set(G2O_INCLUDE_DIR  ${PROJECT_SOURCE_DIR}/Thirdparty/CompiledLibs/include/g2o)
 
 # Macro to unify finding both the debug and release versions of the
