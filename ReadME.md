@@ -62,33 +62,39 @@ One to to publish images from the camera and the other to run the H-SLAM main ap
 
 0. Allow access to containers:
 ``` bash
-    xhost +
+xhost +
 ```
 
 1. Open two terminals and execute the following command in each:
 ``` bash
-    docker run -it --net=host --privileged -e DISPLAY=unix$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:rw --device /dev/video0:/dev/video0  hslam /bin/bash
+docker run -it --net=host --privileged -e DISPLAY=unix$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix:rw --device /dev/video0:/dev/video0  hslam /bin/bash
 ```
 This command starts the container and provides an interactive terminal within it.
 
 2. In the first terminal run the following command to open a camera stream through ROS and publish the camera's images unto a ROS topic:
 ``` bash
-    roslaunch usb_cam usb_cam-test.launch
+roslaunch usb_cam usb_cam-test.launch
 ```
 A display window will pop with the camera's stream.
 
 3. In the second terminal, execute this command to run the H-SLAM algorithm on the image stream.
 ``` bash
-    rosrun hslam_ros hslam_live image:=/usb_cam/image_raw calib=/catkin_ws/src/res/camera.txt gamma=/catkin_ws/src/res/pcalib.txt vignette=/catkin_ws/src/res/vignette.png
+rosrun hslam_ros hslam_live image:=/usb_cam/image_raw calib=/catkin_ws/src/res/camera.txt gamma=/catkin_ws/src/res/pcalib.txt vignette=/catkin_ws/src/res/vignette.png
 ```
 
-Start moving the camera/computer around and perform SLAM.
+Start moving the camera around and perform realtime Visual SLAM!
 
 ### Results:
 
-The HSLAM system output two files:
+The HSLAM system output two files when it exists:
 1. **result.txt** file that contains corrected trajectory.
 2. **map.pcd** file containing point cloud of the contrusted map. 
+
+Additionally, the following data is published over the ROS network:
+1. **/hslam_path**: publishes the current camera pose.
+2. **/hslam_pose**: published the path tracked so far.
+3. **/hslam_map**: publishes the map redered so far.
+
 
 ## Features
 
