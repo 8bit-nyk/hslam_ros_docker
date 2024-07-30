@@ -4,15 +4,18 @@ A containerized "ready-to-use" SLAM application that leverages both direct and i
 
 ### Related Publications:
 [A Unified Hybrid Formulation for Visual SLAM](https://scholarworks.aub.edu.lb/bitstream/handle/10938/22253/YounesGeorges_2021.pdf?sequence=5) (Doctoral dissertation), Younes, G. (2021).
-[H-SLAM: Hybrid Direct-Indirect Visual SLAM](https://arxiv.org/pdf/2306.07363)
+
+[H-SLAM: Hybrid Direct-Indirect Visual SLAM](https://doi.org/10.1016/j.robot.2024.104729)  Younes, G. et al (2024).
 
 Please cite the paper if used in an academic context.
 ```
-@article{younes2023h,
-  title={H-SLAM: Hybrid Direct-Indirect Visual SLAM},
+@article{younes2024h,
+  title={H-SLAM: Hybrid direct-indirect visual SLAM},
   author={Younes, Georges and Khalil, Douaa and Zelek, John and Asmar, Daniel},
-  journal={arXiv preprint arXiv:2306.07363},
-  year={2023}
+  journal={Robotics and Autonomous Systems},
+  pages={104729},
+  year={2024},
+  publisher={Elsevier}
 }
 
 ```
