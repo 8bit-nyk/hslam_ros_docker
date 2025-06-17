@@ -1,5 +1,5 @@
 # H-SLAM (Hybrid Simultaneous Localization and Mapping).
-
+### This is an outdated version of the HSLAM project, for the most recent development repository please refer to [HSLAM Dev](https://github.com/8bit-nyk/hslam_ros2)
 A containerized "ready-to-use" SLAM application that leverages both direct and indirect methods.
 
 ### Related Publications:
