@@ -2,6 +2,10 @@
 ### This is an outdated version of the HSLAM project, for the most recent development repository please refer to [HSLAM Dev](https://github.com/8bit-nyk/hslam_ros2)
 A containerized "ready-to-use" SLAM application that leverages both direct and indirect methods.
 
+#### Related Legacy projects:
+[HSLAM C++ original implementation](https://https://github.com/8bit-nyk/HSLAM)  
+[ROS1 Wrapper for HSLAM](https://github.com/8bit-nyk/hslam_ros) 
+
 ### Related Publications:
 
 Please cite the paper if used in an academic context.
