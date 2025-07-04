@@ -5,6 +5,8 @@ A containerized "ready-to-use" SLAM application that leverages both direct and i
 ### Related Publications:
 
 Please cite the paper if used in an academic context.
+
+[H-SLAM: Hybrid direct--indirect visual SLAM](https://doi.org/10.1016/j.robot.2024.104729)
  ```bibtex
     @article{younes2024h,
     title={H-SLAM: Hybrid direct--indirect visual SLAM},
