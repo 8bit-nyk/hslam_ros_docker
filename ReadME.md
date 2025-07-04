@@ -3,21 +3,33 @@
 A containerized "ready-to-use" SLAM application that leverages both direct and indirect methods.
 
 ### Related Publications:
-[A Unified Hybrid Formulation for Visual SLAM](https://scholarworks.aub.edu.lb/bitstream/handle/10938/22253/YounesGeorges_2021.pdf?sequence=5) (Doctoral dissertation), Younes, G. (2021).
-
-[H-SLAM: Hybrid Direct-Indirect Visual SLAM](https://doi.org/10.1016/j.robot.2024.104729)  Younes, G. et al (2024).
 
 Please cite the paper if used in an academic context.
-```
-@article{younes2024h,
-  title={H-SLAM: Hybrid direct-indirect visual SLAM},
-  author={Younes, Georges and Khalil, Douaa and Zelek, John and Asmar, Daniel},
-  journal={Robotics and Autonomous Systems},
-  pages={104729},
-  year={2024},
-  publisher={Elsevier}
-}
+ ```bibtex
+    @article{younes2024h,
+    title={H-SLAM: Hybrid direct--indirect visual SLAM},
+    author={Younes, Georges and Khalil, Douaa and Zelek, John and Asmar, Daniel},
+    journal={Robotics and Autonomous Systems},
+    volume={179},
+    pages={104729},
+    year={2024},
+    publisher={Elsevier}
+    }
+ ```
+#### Other Related Works
 
+[Inline Photometrically Calibrated Hybrid Visual SLAM](https://doi.org/10.1109/IROS58592.2024.10802153)
+
+
+```bibtex
+@inproceedings{abboud2024inline,
+  title={Inline Photometrically Calibrated Hybrid Visual SLAM},
+  author={Abboud, Nicolas and Sayour, Malak and Elhajj, Imad H and Zelek, John and Asmar, Daniel},
+  booktitle={2024 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)},
+  pages={10089--10096},
+  year={2024},
+  organization={IEEE}
+}
 ```
 
 ## Table of Contents
@@ -98,7 +110,9 @@ Additionally, the following data is published over the ROS network:
 2. **/hslam_pose**: published the path tracked so far.
 3. **/hslam_map**: publishes the map redered so far.
 
-
+You should get an output similair to screenshot below showing the Visual Monocular SLAM process:
+  ![hslam-output-screenshot](https://github.com/8bit-nyk/HSLAM/assets/49674476/ab3a1c94-8f38-41da-855d-c25566f720c4)
+  
 ## Features
 
 - Utilizes the H-SLAM algorithm for simultaneous localization and mapping.
@@ -116,5 +130,10 @@ Contributions to the H-SLAM project are welcome. If you would like to contribute
 4. Push your changes to your forked repository.
 5. Submit a pull request detailing the changes you have made.
 
-## License
-This project is licensed under the [MIT License](LICENSE).
+## License 
+This repository is licensed under the GNU General Public License version 3 [GPLv3](LICENSE).
+
+This work is a joint collaborative effort between the:
+
+- Vision and Robotics Lab at the American University of Beirut (AUB)
+- Vision and Image Processing Group at the University of Waterloo (UW)
